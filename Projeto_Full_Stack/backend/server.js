@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors');
 
 const app = express();
+// A variável PORT é injetada automaticamente pelo Railway
 const PORT = process.env.PORT || 5000;
 
 // Middlewares
@@ -12,7 +13,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static('uploads'));
 
-// Conexão com o Banco de Dados
+// Conexão com o Banco de Dados (com o script de criação automática)
 require('./database/db.js'); 
 
 // Rota de Teste da API
@@ -20,15 +21,11 @@ app.get('/api/status', (req, res) => {
     res.json({ status: 'API está online e funcionando!' });
 });
 
-// ===============================================
-// CARREGAR ROTAS
-// ===============================================
-
 // Rotas de Autenticação
 const authRoutes = require('./routes/authRoutes');
 app.use('/api/auth', authRoutes);
 
-// Rotas Protegidas (Ex: /api/protegido/dados)
+// Rotas Protegidas
 const protectedRoutes = require('./routes/protectedRoutes');
 app.use('/api/protegido', protectedRoutes);
 
@@ -37,8 +34,8 @@ const noticiaRoutes = require('./routes/noticiaRoutes');
 app.use('/api/noticias', noticiaRoutes);
 
 
-// Iniciar Servidor
-app.listen(PORT, () => {
+// --- A CORREÇÃO ESTÁ AQUI ---
+// Adicionamos '0.0.0.0' para "ouvir" a rede pública do Railway
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`[Servidor] Backend rodando na porta ${PORT}`);
-    console.log(`[Servidor] http://localhost:${PORT}/api/status`);
 });
